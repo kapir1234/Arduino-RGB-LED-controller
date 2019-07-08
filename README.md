@@ -12,11 +12,13 @@ Parts used:
 - wires
 - solder
 
+
+Steps:
 - Make circuit like in the .png file
 - Load .INO file to Arduino IDE of your choise
 - Upload to the Arduino Nano or Uno
 - Install LED app into the smartphone
 - Bluetooth should connect without problems. Sometimes it needs two-three tries.
 - After all is set up and working, You can adjust white color of LEDs by changing
-  values (0-255) of Red, Green and Blue in .INO code (Lines 16-19)
+  values (0-255) of Max Red, Green and Blue in .INO code (Lines 16-19)
   
