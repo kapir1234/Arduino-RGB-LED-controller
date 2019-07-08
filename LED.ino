@@ -3,15 +3,15 @@
 
 SoftwareSerial mySerial(12, 11); //Define PIN11 & PIN12 as RX and TX pins
 
-void rozdzielenie_RGB();
+void separation_RGB();
 void Light_RGB_LED();
 void output(float Red, float Green, float Blue);
 boolean checkIsOff();
 void A_to_B(float & A_from, float & B_from, float & C_from, float & A_to, float & B_to, float & C_to);
-float roznica (float X_from, float X_to);
-void colorChange(float R_from, float G_from, float B_from, float R_to, float G_to, float B_to, short szybkosc);
-void colorFading(short szybkosc);
-void breathe(short szybkosc);
+float difference (float X_from, float X_to);
+void colorChange(float R_from, float G_from, float B_from, float R_to, float G_to, float B_to, short howFast);
+void colorFading(short howFast);
+void breathe(short howFast);
 
 //White color adjustment
 float Rmax = 225;
@@ -50,7 +50,7 @@ void loop() {
     //Serial.print("RGB:");
     //Serial.println(RGB);
     
-    rozdzielenie_RGB();
+    separation_RGB();
 
     if (RGB == "ON") {
       if(isOFF){
@@ -108,7 +108,7 @@ boolean checkIsOff(){
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
-void rozdzielenie_RGB(){
+void separation_RGB(){
 
   if(RGB == "ON" || RGB == "OFF" || RGB == "FADEON" || RGB == "COLORON")
     return;
@@ -145,7 +145,7 @@ void A_to_B(float & A_from, float & B_from, float & C_from, float & A_to, float 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
-float roznica (float X_from, float X_to) {
+float difference (float X_from, float X_to) {
   float X_gap;
   if (X_from >= X_to) X_gap = (float)(X_from - X_to) / -255;
   else X_gap = (float)(X_to - X_from) / 255;
@@ -154,11 +154,11 @@ float roznica (float X_from, float X_to) {
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
-void colorChange(float R_from, float G_from, float B_from, float R_to, float G_to, float B_to, short szybkosc){
+void colorChange(float R_from, float G_from, float B_from, float R_to, float G_to, float B_to, short howFast){
 
-  float R_gap = roznica(R_from, R_to);
-  float G_gap = roznica(G_from, G_to);
-  float B_gap = roznica(B_from, B_to);
+  float R_gap = difference(R_from, R_to);
+  float G_gap = difference(G_from, G_to);
+  float B_gap = difference(B_from, B_to);
 
   for ( unsigned short i = 0; i < 255; i++) {
     R_from += R_gap;
@@ -166,7 +166,7 @@ void colorChange(float R_from, float G_from, float B_from, float R_to, float G_t
     B_from += B_gap;
     A_to_B(R, G, B, R_from, G_from, B_from);
     output(R_from,G_from,B_from);
-    delay(szybkosc);
+    delay(howFast);
     if (mySerial.available()){
       A_to_B(preR, preG, preB, R, G, B);
      return;
@@ -176,7 +176,7 @@ void colorChange(float R_from, float G_from, float B_from, float R_to, float G_t
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
-void colorFading(short szybkosc){
+void colorFading(short howFast){
 
   checkIsOff();
   float R_next, G_next, B_next;
@@ -194,13 +194,13 @@ void colorFading(short szybkosc){
       {255,26,0},//8.Orange
     };
     
-      unsigned short wybor = (unsigned short)random(0,9);
-      R_next = Colors[wybor][0]*Brightness;
-      G_next = Colors[wybor][1]*Brightness;
-      B_next = Colors[wybor][2]*Brightness;
+      unsigned short choice = (unsigned short)random(0,9);
+      R_next = Colors[choice][0]*Brightness;
+      G_next = Colors[choice][1]*Brightness;
+      B_next = Colors[choice][2]*Brightness;
 
-      delay(szybkosc*100);
-      colorChange(R, G, B, R_next, G_next, B_next, szybkosc);
+      delay(howFast*100);
+      colorChange(R, G, B, R_next, G_next, B_next, howFast);
       
   }while(!mySerial.available());
 
@@ -208,7 +208,7 @@ void colorFading(short szybkosc){
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
-void breathe(short szybkosc){
+void breathe(short howFast){
 
   checkIsOff();
   
@@ -218,11 +218,11 @@ void breathe(short szybkosc){
   float B_low = B * (lowestBrightness / 100);
   
   do{
-    colorChange(R, G, B, R_low, G_low, B_low, szybkosc);
+    colorChange(R, G, B, R_low, G_low, B_low, howFast);
     if (mySerial.available())
             return;
-    delay(szybkosc*50);
-    colorChange(R, G, B, preR, preG, preB, szybkosc);
+    delay(howFast*50);
+    colorChange(R, G, B, preR, preG, preB, howFast);
  
   }while(!mySerial.available());
 }
