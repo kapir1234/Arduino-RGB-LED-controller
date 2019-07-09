@@ -23,7 +23,7 @@ Parts used:
 
 Steps:
 - Make circuit like in the "Arduino RGB LED .png" file
-- Load "LED.ino" file to Arduino IDE of your choise
+- Load "LED.ino" file to Arduino IDE of your choice
 - Upload to the Arduino Nano or Uno
 - Install LED app into the smartphone
 - Bluetooth should connect without problems. Sometimes it needs two-three tries.
